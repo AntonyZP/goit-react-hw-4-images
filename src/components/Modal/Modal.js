@@ -12,9 +12,9 @@ export default function Modal ({children, onCloseModal}) {
   };
   window.addEventListener('keydown', handleKeyDown);
   return ()=> 
-  window.removeEventListener('keydown', handleKeyDown), 
-  [onCloseModal]
-  })
+  window.removeEventListener('keydown', handleKeyDown)
+  }, 
+  [onCloseModal])
 
   const handleBackdropClick = e => {
     if (e.currentTarget === e.target) {
