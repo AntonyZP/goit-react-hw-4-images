@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import fetchImages from 'components/Api';
-import Searchbar from "components/Searchbar";
+// import Searchbar from 'components/Searchbar';
 import ImageGallery from "components/ImageGallery";
 import Button from "components/Button";
 import { Wrapper, Message, Image } from './App.styled'
 import { ThreeCircles } from "react-loader-spinner";
 import Modal from "components/Modal";
+import Searchbar from 'components/Searchbar';
 
 export default class App extends Component {
   state ={
@@ -97,8 +98,7 @@ export default class App extends Component {
     )}
     {images.length>0 &&
       (<Button onClick = {this.handleOnClickMoreButton} onLoadMoreBtn={loadMore}>LoadMore</Button>
-    )}
-   
+    )}   
 </Wrapper>    
       );
     }
