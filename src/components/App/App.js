@@ -1,107 +1,83 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
+import { ThreeCircles } from "react-loader-spinner";
 import fetchImages from 'components/Api';
-// import Searchbar from 'components/Searchbar';
 import ImageGallery from "components/ImageGallery";
 import Button from "components/Button";
 import { Wrapper, Message, Image } from './App.styled'
-import { ThreeCircles } from "react-loader-spinner";
 import Modal from "components/Modal";
 import Searchbar from 'components/Searchbar';
 
-export default class App extends Component {
-  state ={
-    images: [],
-    searchImg: '',
-    page: 1,
-    loadMore: true,
-    loading: false,
-    error: null,
-    showModal: false,
-    modalUrl: null,
-  };
-  
-  componentDidUpdate(_, prevState) {
-    const {searchImg, page} = this.state
-    const prevSearchImg = prevState.searchImg;
-    const prevPage = prevState.page;
-   
-    if (prevSearchImg !== searchImg 
-      || prevPage !== page
-      ) {
-        this.setState({loading: true});     
-            fetchImages(searchImg, page)
-            .then(response => {
-              if (page !== prevPage) {
-                if (response.hits.length<12){
-                  this.setState({loadMore: false})
-                }
-                this.setState(prevState => ({
-                  images: [...prevState.images, ...response.hits],                    
-                }));
-              } else if 
-              (searchImg !== prevSearchImg) {
-                this.setState({images: response.hits})
-                
-                if (response.hits.length<12){
-                  this.setState({loadMore: false})
-                }
-              }
-            })
-            .catch(error=>this.setState({error: error}),
-            )            
-            .finally(()=> this.setState({loading: false}))          
-        }
-    }   
+export default function App () {
+  const[images, setImages] = useState([])
+  const[searchImg, setSearchImg] = useState()
+  const[page, setPage] = useState(1)
+  const[loadMore,  setLoadMore] = useState(true)
+  const[loading, setLoading] = useState(false)
+  const[error, setError] = useState(null)
+  const[showModal, setShowModal] = useState(false)
+  const[modalUrl, setModalUrl] = useState('')
 
-  handleFormSubmit = searchQuery => {
-    this.setState({
-      page: 1,
-      images: [],
-      searchImg: searchQuery,
-    });
+  useEffect (() =>{
+    if (searchImg === '') {
+      return;
+    } else {
+    setLoading(true); 
+      fetchImages(searchImg, page)
+      .then(response => {
+        if (response.hits.length<12){
+          setLoadMore(false)
+          }
+          setImages(prevState => [...prevState, ...response.hits]);
+          setImages(response.hits)         
+        })
+      .catch(error=>setError(error),
+      )            
+      .finally(()=> setLoading(false)) }         
+  }, [loadMore, page, searchImg])
+
+  const handleFormSubmit = searchQuery => {
+    setPage(1);
+    setImages([]);
+    setSearchImg(searchQuery);
   };
 
-  handleOnClickMoreButton = e => {
+  const handleOnClickMoreButton = e => {
     e.preventDefault();
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }))
+    setPage(prevState => prevState.page + 1,
+    )
   }
 
-  toggleModal = ()=> {
-    this.setState(({showModal}) =>({
-      showModal: !showModal,
-    }))
+  const toggleModal = ()=> {
+    setShowModal(({showModal}) =>!showModal,
+    )
   }
 
-  openModal = largeImageURL => {
-    this.setState({modalUrl: largeImageURL});
-    this.toggleModal();
+  const openModal = largeImageURL => {
+    setModalUrl( largeImageURL);
+    toggleModal();
   }
 
-  render () {
-    const {images, loading, error, searchImg, loadMore, showModal, modalUrl} = this.state;
-    
+
     return (       
 <Wrapper>
-  <Searchbar onSubmit={this.handleFormSubmit}/>
+  <Searchbar onSubmit={handleFormSubmit}/>
     {error && <h1>Change query</h1>}
     {loading && <ThreeCircles/>}
     {!searchImg && <Message>Enter a request</Message>}
     {images && <ImageGallery 
-      images={this.state.images} 
-      onClickImage ={this.openModal}/>}
+      images={images} 
+      onClickImage ={openModal}/>}
     {showModal && (
-      <Modal onCloseModal={this.toggleModal}>
+      <Modal onCloseModal={toggleModal}>
         <Image src={modalUrl} alt='large'></Image>
       </Modal>
     )}
     {images.length>0 &&
-      (<Button onClick = {this.handleOnClickMoreButton} onLoadMoreBtn={loadMore}>LoadMore</Button>
+      (<Button onClick = {handleOnClickMoreButton} onLoadMoreBtn={loadMore}>LoadMore</Button>
     )}   
 </Wrapper>    
       );
-    }
+    
   }
  
    /* <Toaster autoClose={3000}/> */
