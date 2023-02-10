@@ -5,14 +5,15 @@ import { Overlay, ModalWindow } from "./Modal.styled";
 const modalRoot = document.querySelector('#modal-root');
 
 export default function Modal ({children, onCloseModal}) {
+  
   useEffect(()=> { const handleKeyDown = e =>{
     if (e.code === 'Escape') {
       onCloseModal()
-    }
-  };
-  window.addEventListener('keydown', handleKeyDown);
-  return ()=> 
-  window.removeEventListener('keydown', handleKeyDown)
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return ()=> 
+    window.removeEventListener('keydown', handleKeyDown)
   }, 
   [onCloseModal])
 
