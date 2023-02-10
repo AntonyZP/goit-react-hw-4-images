@@ -6,7 +6,10 @@ import { LoadMoreButton } from "./Button.styled";
 const Button = ({onClick, onLoadMoreBtn}) =>{
     
     return (
-        <LoadMoreButton disabled = {!onLoadMoreBtn} type="button" onClick={onClick}
+        <LoadMoreButton  
+        type="button" 
+        onClick={onClick} 
+        disabled = {!onLoadMoreBtn}
         >LoadMore...</LoadMoreButton>
     )
 }

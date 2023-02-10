@@ -22,10 +22,10 @@ export default function Modal ({children, onCloseModal}) {
     }
   }
 
-    return createPortal(
-      <Overlay onClick={handleBackdropClick}>
-        <ModalWindow>{children}</ModalWindow>
-      </Overlay>,
-      modalRoot
-    );  
+  return createPortal(
+    <Overlay onClick={handleBackdropClick}>
+      <ModalWindow>{children}</ModalWindow>
+    </Overlay>,
+    modalRoot
+  );  
 }
